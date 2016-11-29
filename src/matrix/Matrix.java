@@ -1,6 +1,8 @@
 package matrix;
 
 import java.util.Scanner;
+import static Sweep.Main.*;
+
 
 public class Matrix {
     private int amountStrings;
@@ -43,6 +45,8 @@ public class Matrix {
             for (int j = 0; j < a.length; j++) {
                 for (int k = 0; k < a.length; k++) {
                     temp[i][j] += a[i][k] * b[k][j];
+                    counterMul++;
+                    counterSum++;
                 }
             }
         }

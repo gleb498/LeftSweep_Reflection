@@ -4,6 +4,8 @@ import matrix.Matrix;
 
 import java.util.Scanner;
 
+import static Sweep.Main.*;
+
 public class Reflection {
     private Matrix A;
     private double[][] V;
@@ -18,7 +20,7 @@ public class Reflection {
     private double[][] E;
 
     public Reflection() {
-        amountStrings = 3;
+        amountStrings = 5;
         A = new Matrix(amountStrings, amountStrings);
         V = new double[amountStrings][amountStrings];
         f = new double[amountStrings];
@@ -43,13 +45,13 @@ public class Reflection {
 
     private void fillEq() {
         Scanner sc = new Scanner(System.in);
-        System.out.println("matrix.Matrix A: ");
+        System.out.println("Enter matrix A: ");
         for (int i = 0; i < amountStrings; i++) {
             for (int j = 0; j < amountStrings; j++) {
                 A.matrix[i][j] = sc.nextDouble();
             }
         }
-        System.out.println("F: ");
+        System.out.println("Enter f: ");
         for (int i = 0; i < amountStrings; i++) {
             f[i] = sc.nextDouble();
         }
@@ -60,6 +62,8 @@ public class Reflection {
         int length = a.length;
         for (int i = 0; i < length; i++) {
             result += a[i] * b[i];
+            counterMul++;
+            counterSum++;
         }
         return result;
     }
@@ -69,6 +73,8 @@ public class Reflection {
         for (int i = 0; i < amountStrings; i++) {
             for (int j = 0; j < amountStrings; j++) {
                 result[i] += V[i][j] * f[j];
+                counterSum++;
+                counterMul++;
             }
         }
         return result;
@@ -103,13 +109,18 @@ public class Reflection {
         double[] changedY = new double[amountStrings];
         for (int i = 0; i < amountStrings; i++) {
             changedY[i] = y[i] - alpha * e[i];
+            counterMul++;
+            counterSum++;
         }
         p = Math.sqrt(2 * scalarMultiply(y, changedY));
+        counterMul++;
     }
 
     private void fillW() {
         for (int i = 0; i < amountStrings; i++) {
             w[i] = (y[i] - alpha * e[i]) / p;
+            counterMul += 2;
+            counterSum++;
         }
     }
 
@@ -117,6 +128,8 @@ public class Reflection {
         for (int i = 0; i < amountStrings; i++) {
             for (int j = 0; j < amountStrings; j++) {
                 V[i][j] = E[i][j] - 2 * w[i] * w[j];
+                counterMul += 3;
+                counterSum++;
             }
         }
     }
@@ -141,11 +154,15 @@ public class Reflection {
             x[i] = f[i];
         }
         x[amountStrings - 1] /= A.matrix[amountStrings - 1][amountStrings - 1];
+        counterMul++;
         for (int i = amountStrings - 2; i >= 0; i--) {
             for (int j = i + 1; j < amountStrings; j++) {
                 x[i] -= x[j] * A.matrix[i][j];
+                counterMul++;
+                counterSum++;
             }
             x[i] /= A.matrix[i][i];
+            counterMul++;
         }
         System.out.println("X:");
         for (double item : x) {
@@ -166,10 +183,10 @@ public class Reflection {
             System.out.printf("%E", item);
             System.out.println();
         }
-        double max = r[0];
+        double max = Math.abs(r[0]);
         for (int i = 1; i < amountStrings; i++) {
             if (Math.abs(max) < Math.abs(r[i])) {
-                max = r[i];
+                max = Math.abs(r[i]);
             }
         }
         System.out.println("||r|| = " + max);
@@ -185,5 +202,7 @@ public class Reflection {
         orthogonalization();
         findX();
         checkEqualization(checkA.matrix, checkF);
+        System.out.println("Mul:" + counterMul);
+        System.out.println("Sum:" + counterSum);
     }
 }
